@@ -16,7 +16,8 @@ const FileUpload: FC = () => {
 
     const handleFileUpload = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-
+        console.log(alias,selectedFile);
+        
         if (!selectedFile) {
             setError('Please select a file to upload.');
             return;
