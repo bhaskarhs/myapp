@@ -26,11 +26,10 @@ const AppRoutes: FC = () => {
         }))
 
     }
-    const getLocaStorage = localStorage.getItem("login")
     useEffect(() => {
 
-        if (getLocaStorage) {
-            setContext({ isLoggedIn: getLocaStorage })
+        if (localStorage.getItem("login")) {
+            setContext({ isLoggedIn: localStorage.getItem("login") })
 
         }
     }, [])
