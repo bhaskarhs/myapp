@@ -58,19 +58,24 @@ const Home: FC = () => {
         })
     }
     const fileRunHandler = (file: File) => {
+        
+        
         const payload = {
             "proccess_is": file.name,
             "file_id": file.id,
             "file_path": `http://165.22.29.27:8000/media/${file.files}`
         }
+        console.log(payload);
         setRunningFileId(file.id)
         axios.post(apiUrlEndPoint.runFile(), payload)
             .then((res) => {
+                console.log("/api/runfile",res);
                 console.log(res);
                 setRunningFileId('')
                 fetchFileList()
             })
             .catch(error => {
+                console.error("/api/runfile",error);
                 console.log(error);
                 setRunningFileId('')
             })

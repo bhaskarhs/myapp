@@ -28,7 +28,8 @@ const FileUpload: FC = () => {
         const formData = new FormData();
         formData.append('csv_file', selectedFile);
         formData.append('alias', alias);
-
+        console.log(formData);
+        
         try {
             const response = await axios.post(apiUrlEndPoint.fileUploadApiEndpoint(), formData, {
                 headers: {
@@ -37,8 +38,11 @@ const FileUpload: FC = () => {
             });
 
             if (response.status === 200) {
+                console.log("/api/fileupload",response);
+                
                 setSuccessMessage('File uploaded and processed successfully!');
             } else {
+                console.error("/api/fileupload",response);
                 setError('Upload failed. Please try again.');
             }
         } catch (error) {
