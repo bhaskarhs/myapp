@@ -27,8 +27,8 @@ const FileUpload: FC = () => {
         setSuccessMessage('');
 
         const formData = new FormData();
-        formData.append('csv_file', selectedFile);
-        formData.append('alias', alias);
+        formData.append('files', selectedFile);
+        formData.append('name', alias);
         console.log(formData);
         
         try {
