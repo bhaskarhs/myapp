@@ -61,7 +61,7 @@ const FileUpload: FC = () => {
                 onSubmit={handleFileUpload}
             >
                 <div className='flex flex-col mb-4'>
-                    <label className='text-sm '>File alias </label>
+                    <label className='text-sm '>File alias{" "} <span className='text-red font-bold'>*</span> </label>
                     <input
                         type='text'
                         className='border-solid py-1 px-2 my-1 rounded-sm'

@@ -34,14 +34,17 @@ const Home: FC = () => {
     const [downloadingFileLoading, setDownloadFileLoading] = useState<boolean>(false)
     const [fileDownloadeRsponse,setFileDownloadResponse] = useState<string>("")
     const [fileDownloadeErrorRsponse,setFileDownloadErroResponse] = useState<string>("")
+   const [offset,setOffset] = useState<number>(0)
    
 
     useEffect(() => {
         fetchFileList()
-    }, [])
+    }, [offset])
     const fetchFileList = () => {
         setIsLoading(true)
-        const response = axios.post(apiUrlEndPoint.fetchFileDetailsApi(), {
+        console.log(`${apiUrlEndPoint.fetchFileDetailsApi()}?limit=10&offset=${offset}`);
+        
+        const response = axios.post(`${apiUrlEndPoint.fetchFileDetailsApi()}?limit=10&offset=${offset}`, {
             "config": {
                 "is_": "get_list"
             }
@@ -57,6 +60,7 @@ const Home: FC = () => {
 
         })
     }
+    
     const fileRunHandler = (file: File) => {
         
         
@@ -81,6 +85,7 @@ const Home: FC = () => {
             })
     }
 
+
     console.log(JSON.stringify(filesList));
     const formatDate = (dateString: string) => {
         // const options = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -99,14 +104,42 @@ const Home: FC = () => {
         .then(res => {
             console.log(res);
         
-            setDownloadFileLoading(true)
+            setDownloadFileLoading(false)
             setFileDownloadResponse(res?.data?.message)
+            const downloadLink = res.data.download_link;
+      const fileName = downloadLink.substring(downloadLink.lastIndexOf('/') + 1);
+     
+      downloadFileUsingBlob(downloadLink, fileName);
         })
         .catch(error => {
             console.log(error);
-            setDownloadFileLoading(true)
+            setDownloadFileLoading(false)
             setFileDownloadErroResponse("something went wrong")
         })
+    }
+
+    const downloadFileUsingBlob = async (fileUrl: string, fileName: string) => {
+        try {
+          const response = await fetch(fileUrl);
+          const blob = await response.blob();
+          const blobUrl = URL.createObjectURL(blob);
+      
+          const link = document.createElement('a');
+          link.href = blobUrl;
+          link.setAttribute('download', fileName);
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        } catch (error) {
+          console.error('Error downloading file:', error);
+        }
+      };
+    const resetToggle = () => {
+        //to rest once api is called so that they can enter the email again
+        toggle()
+        setFileDownloadErroResponse('')
+        setFileDownloadResponse('')
+
     }
 
     return (
@@ -127,7 +160,7 @@ const Home: FC = () => {
                             <table className="table">
                                 <thead>
                                     <tr>
-                                        <th scope="col">#</th>
+                                        <th scope="col">S.No</th>
                                         <th scope="col">File Name</th>
                                         <th scope="col">Leads </th>
                                         <th scope="col">Status</th>
@@ -139,11 +172,11 @@ const Home: FC = () => {
                                 <tbody>
                                     {filesList.map((file, index) => (
                                         <tr key={file.id}>
-                                            <td scope='row'>{index}</td>
+                                            <td scope='row'>{index+1}</td>
                                             <td className='filename'>{file.name ? file.name : " - "}</td>
                                             <td>{file.leads}</td>
                                             <td className='file-status'>
-                                                <p className={file.status !== "waiting" ? 'processing-status' : 'wiating-status'}>
+                                                <p className='processing-status'>
                                                     {file.status}
                                                 </p></td>
                                             <td>{formatDate(file.created_at)}</td>
@@ -157,7 +190,7 @@ const Home: FC = () => {
                                                   toggle()
                                                   setID(file.id)  
                                                 } }>Export</button>
-                                                <button>Kill</button>
+                                                <button>Stop</button>
                                             </td>
                                         </tr>
                                     ))}
@@ -190,7 +223,22 @@ const Home: FC = () => {
 
                                 </tbody>
                             </table>
-
+                            <div className='flex justify-end align-middle mt-8'>
+                         {offset>=10 &&
+                            <button onClick={()=>{
+                                
+                                    setOffset(offset-10)
+                                }} className='mr-8 bg-buttonbg_color text-white px-4 py-2 text-sm rounded-sm'>
+                                    Prev
+                                </button>}
+                                
+                                <button onClick={()=>{
+                                    
+                                    setOffset(offset+10)
+                                }} className='bg-buttonbg_color text-white px-4 py-2 text-sm rounded-sm'>
+                                    Next
+                                </button>
+                            </div>
                         </div> :
 
                         <div>
@@ -199,7 +247,7 @@ const Home: FC = () => {
                     }
                     <br />
                 </div>
-                <Modal isOpen={isOpen} toggle={toggle}>
+                <Modal isOpen={isOpen} toggle={resetToggle}>
                     {fileDownloadeRsponse.length > 0 || fileDownloadeErrorRsponse.length>0 ?<> 
                     {fileDownloadeRsponse.length>0 ? <>
                     <div style={{
@@ -211,7 +259,7 @@ const Home: FC = () => {
                         {fileDownloadeRsponse}
                        
                     </div>
-                    <button className='bg-buttonbg_color text-white px-4 py-2 text-sm rounded-sm' type='submit' onClick={toggle}>Next</button>
+                    <button className='bg-buttonbg_color text-white px-4 py-2 text-sm rounded-sm' type='submit' onClick={resetToggle}>Next</button>
                      </>:<>    
                      <div className='p-4 rounded-sm my-2' style={{
                         backgroundColor:"#f87171",
@@ -219,7 +267,7 @@ const Home: FC = () => {
                         {fileDownloadeErrorRsponse}
                        
                     </div>
-                    <button className='bg-buttonbg_color text-white px-4 py-2 text-sm rounded-sm' type='submit' onClick={toggle}>Next</button></> }
+                    <button className='bg-buttonbg_color text-white px-4 py-2 text-sm rounded-sm' type='submit' onClick={resetToggle}>Next</button></> }
                     </>  :
                     <><h3 className='text-md'>Enter the email to download</h3>
                     <form

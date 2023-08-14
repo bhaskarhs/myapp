@@ -10,7 +10,9 @@ const Header: FC = () => {
         <div className='w-full bg-white px-12 pt-8 pb-4'>
             <nav className='flex flex-row justify-between align-middle'>
                 <section className='flex flex-row align-middle'>
-                    <NavLink to={"/"} className={"text-sm font-light"}>logo </NavLink>
+                    <NavLink to={"/"} className={"text-sm font-light"}>
+                    <img src={process.env.PUBLIC_URL +'/logo.png' } className='w-[30px] bg-blend-screen'/>
+                    </NavLink>
                     <Link to={"/"} className={`${location.pathname === '/' ? "text-black font-medium" : "text-gray-500 font-normal"} px-8  text-sm`}>Dashboard </Link>
                     <Link to={"/file_upload"} className={`${location.pathname === '/file_upload' ? "text-black font-medium" : "text-gray-500 font-normal"}  text-sm`}>Process File </Link>
 
