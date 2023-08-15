@@ -37,15 +37,14 @@ const Home: FC = () => {
    const [offset,setOffset] = useState<number>(0)
    const [fileLink,setFileLink] = useState<string>('')
 
-    useEffect(() => {
-        fetchFileList()
-    }, [offset])
+    
     useEffect(() => {
         if (fileLink) {
           const downloadLink = document.getElementById('download-link');
           downloadLink?.click(); // Automatically trigger the click event on the link
         }
       }, [fileLink]);
+
     const fetchFileList = () => {
         setIsLoading(true)
         console.log(`${apiUrlEndPoint.fetchFileDetailsApi()}?limit=10&offset=${offset}`);
@@ -66,6 +65,9 @@ const Home: FC = () => {
 
         })
     }
+    useEffect(() => {
+        fetchFileList()
+    }, [offset])
     
     const fileRunHandler = (file: File) => {
         
