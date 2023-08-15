@@ -35,11 +35,17 @@ const Home: FC = () => {
     const [fileDownloadeRsponse,setFileDownloadResponse] = useState<string>("")
     const [fileDownloadeErrorRsponse,setFileDownloadErroResponse] = useState<string>("")
    const [offset,setOffset] = useState<number>(0)
-   
+   const [fileLink,setFileLink] = useState<string>('')
 
     useEffect(() => {
         fetchFileList()
     }, [offset])
+    useEffect(() => {
+        if (fileLink) {
+          const downloadLink = document.getElementById('download-link');
+          downloadLink?.click(); // Automatically trigger the click event on the link
+        }
+      }, [fileLink]);
     const fetchFileList = () => {
         setIsLoading(true)
         console.log(`${apiUrlEndPoint.fetchFileDetailsApi()}?limit=10&offset=${offset}`);
@@ -106,6 +112,7 @@ const Home: FC = () => {
         
             setDownloadFileLoading(false)
             setFileDownloadResponse(res?.data?.message)
+            setFileLink(res.data.download_link)
             const downloadLink = res.data.download_link;
       const fileName = downloadLink.substring(downloadLink.lastIndexOf('/') + 1);
      
@@ -117,23 +124,27 @@ const Home: FC = () => {
             setFileDownloadErroResponse("something went wrong")
         })
     }
+    
 
-    const downloadFileUsingBlob = async (fileUrl: string, fileName: string) => {
-        try {
-          const response = await fetch(fileUrl);
-          const blob = await response.blob();
-          const blobUrl = URL.createObjectURL(blob);
-      
-          const link = document.createElement('a');
-          link.href = blobUrl;
-          link.setAttribute('download', fileName);
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-        } catch (error) {
-          console.error('Error downloading file:', error);
-        }
+    const downloadFileUsingBlob = (url:string, fileName:string) => {
+        console.log(url,fileName);
+        
+        axios.get(url, { responseType: 'arraybuffer' })
+          .then(response => {
+            const blob = new Blob([response.data], { type: 'application/octet-stream' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            a.click();
+            URL.revokeObjectURL(url);
+          })
+          .catch(error => {
+            console.error(error);
+            // Handle download error
+          });
       };
+
     const resetToggle = () => {
         //to rest once api is called so that they can enter the email again
         toggle()
@@ -256,7 +267,13 @@ const Home: FC = () => {
                     }}
                     className='p-4 rounded-sm my-2'
                     >
-                        {fileDownloadeRsponse}
+                        
+                        {fileLink && (
+        <a id="download-link" href={fileLink} download="downloaded_file.xlsx">
+ 
+        </a>
+      )}
+                      <p>  {fileDownloadeRsponse}</p>
                        
                     </div>
                     <button className='bg-buttonbg_color text-white px-4 py-2 text-sm rounded-sm' type='submit' onClick={resetToggle}>Next</button>
