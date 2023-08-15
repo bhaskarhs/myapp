@@ -66,7 +66,7 @@ const Home: FC = () => {
         })
     },[offset])
     useEffect(() => {
-    if (offset > 0) {
+    if (offset >= 0) {
         fetchFileList();
     }
 }, [offset, fetchFileList]);
