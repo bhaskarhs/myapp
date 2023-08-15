@@ -4,7 +4,9 @@ import { inputClassName, labelClassName } from '../Profile/ProfileInfo'
 const Register: FC = () => {
     return (
         <div className='lg:w-[35%] md:w-[50%] w-full'>
-            <h3>Logo</h3>
+               <div className="flex justify-center">
+                  <img src={process.env.PUBLIC_URL +'/logo.svg' } className='text-center w-[100px] bg-blend-screen'/>
+            </div>
             <div className="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">
                 <form method="POST" action="http://buyersscoop.net/register">
                     <input type="hidden" name="_token" value="QpW6SEdeINLdlSOpaEvbK8XZB3jFg9xMFUvWVdLh" />

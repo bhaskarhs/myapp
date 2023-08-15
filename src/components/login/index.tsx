@@ -21,7 +21,10 @@ const Login = () => {
     }
     return (
         <div className='lg:w-[35%] md:w-[50%] w-full'>
-            <h3>Logo</h3>
+            <div className="flex justify-center">
+                  <img src={process.env.PUBLIC_URL +'/logo.svg' } className='text-center w-[100px] bg-blend-screen'/>
+            </div>
+          
             <form className='bg-white rounded-sm px-6 py-4 mt-2 shadow-md overflow-hidden sm:rounded-lg '>
                 <div className='flex flex-col my-4'>
                     <label>

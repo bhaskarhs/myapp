@@ -1,17 +1,16 @@
 import  { FC, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
-
+import { useNavigate } from "react-router-dom"
 
 const Header: FC = () => {
     const location = useLocation()
-    console.log(location);
-
+    
     return (
         <div className='w-full bg-white px-12 pt-8 pb-4'>
             <nav className='flex flex-row justify-between align-middle'>
                 <section className='flex flex-row align-middle'>
                     <NavLink to={"/"} className={"text-sm font-light"}>
-                    <img src={process.env.PUBLIC_URL +'/logo.png' } className='w-[30px] bg-blend-screen'/>
+                    <img src={process.env.PUBLIC_URL +'/logo.svg' } className='w-[30px] bg-blend-screen'/>
                     </NavLink>
                     <Link to={"/"} className={`${location.pathname === '/' ? "text-black font-medium" : "text-gray-500 font-normal"} px-8  text-sm`}>Dashboard </Link>
                     <Link to={"/file_upload"} className={`${location.pathname === '/file_upload' ? "text-black font-medium" : "text-gray-500 font-normal"}  text-sm`}>Process File </Link>
@@ -34,6 +33,12 @@ const DropdownMenu = () => {
     const toggleMenu = () => {
         setMenuOpen(!menuOpen);
     };
+    const navigate = useNavigate();
+    console.log(location);
+    const logoutUser =()=>{
+        localStorage.removeItem('login') 
+        navigate("/login", { replace: true })  
+    }
     return (
         <div className="relative inline-block text-left">
             <div>
@@ -73,7 +78,7 @@ const DropdownMenu = () => {
                     <div className="py-1" role="none">
                         {/* Active: "bg-gray-100 text-gray-900", Not Active: "text-gray-700" */}
                         <NavLink to={"/profile"} className="text-gray-700 block px-4 py-2 text-sm">Profile </NavLink>
-                        <button className="text-gray-700 block px-4 py-2 text-sm">logout</button>
+                        <button className="text-gray-700 block px-4 py-2 text-sm" onClick={logoutUser}>logout</button>
 
                     </div>
                 </div>
