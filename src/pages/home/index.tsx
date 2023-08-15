@@ -1,6 +1,6 @@
 // Home.tsx
 
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import "../../App.scss"
 import axios from 'axios';
 import { apiUrlEndPoint, baseUrl } from '../../api/url';
@@ -45,7 +45,7 @@ const Home: FC = () => {
         }
       }, [fileLink]);
 
-    const fetchFileList = () => {
+    const fetchFileList = useCallback(() => {
         setIsLoading(true)
         console.log(`${apiUrlEndPoint.fetchFileDetailsApi()}?limit=10&offset=${offset}`);
         
@@ -64,10 +64,13 @@ const Home: FC = () => {
             console.log(err);
 
         })
-    }
+    },[offset])
     useEffect(() => {
-        fetchFileList()
-    }, [offset])
+    if (offset > 0) {
+        fetchFileList();
+    }
+}, [offset, fetchFileList]);
+
     
     const fileRunHandler = (file: File) => {
         
